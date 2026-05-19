@@ -73,7 +73,7 @@ export default function HeroSection() {
                 transition={{ duration: 1.2, delay: 0.1 * i, ease: [0.16, 1, 0.3, 1] }}
                 className="oi-regular block text-white"
                 style={{
-                  fontSize: 'clamp(4rem, 10vw, 12rem)',
+                  fontSize: 'clamp(2.8rem, 10vw, 12rem)',
                   lineHeight: 0.9,
                   letterSpacing: '-0.01em',
                 }}
