@@ -19,14 +19,17 @@ export default function SectionFeeling() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     
+    const container = sectionRef.current;
+    if (!container) return;
+
     const ctx = gsap.context(() => {
       // 1. Background parallax
       if (bgRef.current) {
         gsap.to(bgRef.current, {
-          yPercent: 15,
+          yPercent: 12,
           ease: 'none',
           scrollTrigger: {
-            trigger: sectionRef.current,
+            trigger: container,
             start: 'top bottom',
             end: 'bottom top',
             scrub: true,
@@ -34,7 +37,30 @@ export default function SectionFeeling() {
         });
       }
 
-      // 2. High-end editorial typewriter reveal
+      // 2. Eyebrow Scroll-Linked Letter Tracking expand
+      const eyebrow = container.querySelector('.feeling-eyebrow');
+      if (eyebrow) {
+        gsap.fromTo(eyebrow,
+          {
+            opacity: 0,
+            letterSpacing: '0.2em',
+            y: -10,
+          },
+          {
+            opacity: 1,
+            letterSpacing: '0.4em',
+            y: 0,
+            scrollTrigger: {
+              trigger: eyebrow,
+              start: 'top 92%',
+              end: 'top 75%',
+              scrub: 0.5,
+            },
+          }
+        );
+      }
+
+      // 3. High-end editorial typewriter reveal linked to scroll (scrub)
       const lines = gsap.utils.toArray<HTMLElement>('.feeling-line');
       lines.forEach((line) => {
         const chars = line.querySelectorAll('.char');
@@ -42,26 +68,26 @@ export default function SectionFeeling() {
 
         gsap.fromTo(chars,
           {
-            opacity: 0,
-            y: 8,
+            opacity: 0.08,
+            y: 12,
             filter: 'blur(3px)',
           },
           {
             opacity: 1,
             y: 0,
             filter: 'blur(0px)',
-            duration: 0.38,
-            stagger: 0.03, // smooth progressive typing rate
-            ease: 'power2.out',
+            stagger: 0.04,
+            ease: 'sine.out',
             scrollTrigger: {
               trigger: line,
-              start: 'top 85%', // triggers when the top of the line reaches 85% of viewport height
-              toggleActions: 'play none none none',
+              start: 'top 88%',   // triggers when line top is at 88% of viewport
+              end: 'bottom 48%',  // fully completed when line bottom reaches 48%
+              scrub: 0.6,         // premium delay scrub inertia
             },
           }
         );
       });
-    }, sectionRef);
+    }, container);
 
     return () => ctx.revert();
   }, []);
@@ -71,7 +97,7 @@ export default function SectionFeeling() {
       ref={sectionRef}
       data-scroll-context="story"
       data-cursor="text"
-      className="relative py-32 md:py-52 px-8 md:px-16 overflow-hidden"
+      className="relative py-32 md:py-52 px-8 md:px-16 overflow-hidden bg-[#060f17]"
     >
       <div ref={bgRef} className="absolute inset-0 w-full h-[120%] -top-[10%] z-0" data-parallax="bg">
         <Image 
@@ -90,8 +116,8 @@ export default function SectionFeeling() {
 
       <div className="relative z-10 max-w-screen-xl mx-auto text-center">
         <p
-          className="text-[10px] tracking-[0.4em] text-white/40 uppercase mb-16"
-          style={{ fontFamily: '"Work Sans", sans-serif' }}
+          className="feeling-eyebrow text-[10px] text-white/40 uppercase mb-16 will-change-[transform,opacity,letter-spacing]"
+          style={{ fontFamily: '"Work Sans", sans-serif', letterSpacing: '0.2em', opacity: 0 }}
         >
           What it feels like
         </p>
@@ -112,7 +138,7 @@ export default function SectionFeeling() {
                 <span
                   key={charIdx}
                   className="char inline-block will-change-[transform,opacity,filter]"
-                  style={{ opacity: 0, filter: 'blur(3px)', transform: 'translateY(8px)' }}
+                  style={{ opacity: 0.08, filter: 'blur(3px)', transform: 'translateY(12px)' }}
                 >
                   {char === ' ' ? '\u00A0' : char}
                 </span>
