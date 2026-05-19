@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  --color-sand: #f5efe6;
+  --color-ocean: #0a1628;
+  --color-sunset: #e8672a;
+  --color-palm: #2d5a27;
+  --color-cream: #fdf8f2;
+  --color-text-primary: #1a1a1a;
+  --color-text-muted: #6b6b6b;
+  --color-white: #ffffff;
+  --color-coral: #e85d4a;
+
+  --font-serif: 'Oi', serif;
+  --font-sans: 'Work Sans', sans-serif;
+}
+
+.oi-regular {
+  font-family: "Oi", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.work-sans-regular {
+  font-family: "Work Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@theme {
+  --color-sand: var(--color-sand);
+  --color-ocean: var(--color-ocean);
+  --color-sunset: var(--color-sunset);
+  --color-palm: var(--color-palm);
+  --color-cream: var(--color-cream);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
+  --color-white: var(--color-white);
+  --color-coral: var(--color-coral);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+}
+
+body {
+  background-color: #060f17;
+  color: #f0ece8;
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom transitions and base micro-animations */
+a, button {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hide default cursor if custom cursor is enabled */
+.custom-cursor-active {
+  cursor: none;
+}
+.custom-cursor-active a, 
+.custom-cursor-active button {
+  cursor: none;
+}
