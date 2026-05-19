@@ -45,28 +45,7 @@ export default function CustomCursor() {
     return () => document.documentElement.classList.remove('custom-cursor-active');
   }, [isTouch]);
 
-  // ── Set INITIAL appearance on mount (elements exist on first render) ─
-  useEffect(() => {
-    if (isTouch) return;
-    if (!dotRef.current || !auraRef.current) return;
-
-    gsap.set(dotRef.current, {
-      width: 9,
-      height: 9,
-      backgroundColor: '#ffffff',
-      borderRadius: '50%',
-      boxShadow: '0 0 10px 2px rgba(255,255,255,0.22)',
-      opacity: 1,
-    });
-    gsap.set(auraRef.current, {
-      width: 50,
-      height: 50,
-      backgroundColor: 'rgba(255,255,255,0.07)',
-      borderRadius: '50%',
-      filter: 'blur(7px)',
-      opacity: 1,
-    });
-  }, [isTouch]); // runs once after first paint
+  // Initial styles are set as inline React styles directly on the elements to prevent hydration race conditions.
 
   // ── rAF tracking + event listeners ──────────────────────────────
   useEffect(() => {
@@ -228,7 +207,7 @@ export default function CustomCursor() {
 
     gsap.to(dotRef.current,  { ...dot,  duration: 0.38, ease: 'power3.out', overwrite: 'auto' });
     gsap.to(auraRef.current, { ...aura, duration: 0.50, ease: 'power3.out', overwrite: 'auto' });
-  }, [variant, scrollContext, isTouch]);
+  }, [variant, scrollContext, isTouch, mounted]);
 
   // ── If touch device or SSR: render nothing
   if (!mounted || isTouch) {
@@ -251,12 +230,36 @@ export default function CustomCursor() {
     <>
       {/* Aura — slow trailing layer */}
       <div ref={auraWrapRef} style={{ ...wrapStyle, zIndex: 9998 }}>
-        <div ref={auraRef} style={{ flexShrink: 0 }} />
+        <div 
+          ref={auraRef} 
+          style={{ 
+            flexShrink: 0,
+            width: 50,
+            height: 50,
+            backgroundColor: 'rgba(255,255,255,0.07)',
+            borderRadius: '50%',
+            filter: 'blur(7px)',
+            opacity: 1,
+            border: 'none',
+          }} 
+        />
       </div>
 
       {/* Dot — fast leading layer */}
       <div ref={dotWrapRef} style={{ ...wrapStyle, zIndex: 9999 }}>
-        <div ref={dotRef} style={{ flexShrink: 0 }} />
+        <div 
+          ref={dotRef} 
+          style={{ 
+            flexShrink: 0,
+            width: 9,
+            height: 9,
+            backgroundColor: '#ffffff',
+            borderRadius: '50%',
+            boxShadow: '0 0 10px 2px rgba(255,255,255,0.22)',
+            opacity: 1,
+            border: 'none',
+          }} 
+        />
       </div>
     </>
   );
