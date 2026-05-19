@@ -11,8 +11,18 @@ export default function CustomCursor() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
     setMounted(true);
+
+    // Dynamic touch detection: only consider touch active if the user actually touches the screen
+    const handleTouchStart = () => {
+      setIsTouch(true);
+      window.removeEventListener('touchstart', handleTouchStart);
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+    };
   }, []);
 
   const setCursorVariant = useUIStore((s) => s.setCursorVariant);
@@ -234,6 +244,7 @@ export default function CustomCursor() {
     justifyContent: 'center',
     pointerEvents: 'none',
     willChange: 'transform',
+    mixBlendMode: (variant === 'button' || variant === 'shop-item') ? 'normal' : 'difference',
   };
 
   return (

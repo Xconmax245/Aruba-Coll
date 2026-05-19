@@ -260,15 +260,37 @@ function GridIcon({ mobile = false }: { mobile?: boolean }) {
 ────────────────────────────────────────────────────────── */
 function MenuOverlay({ onClose }: { onClose: () => void }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [origin, setOrigin] = useState({ x: '90%', y: '40px' });
+
+  useEffect(() => {
+    const updateOrigin = () => {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        // Center of mobile grid button
+        const pillWidth = Math.min(window.innerWidth - 40, 380);
+        const rightEdge = window.innerWidth / 2 + pillWidth / 2;
+        const xCoord = rightEdge - 30; // ~30px from right edge of the pill
+        setOrigin({ x: `${xCoord}px`, y: `${20 + 25}px` });
+      } else {
+        // Center of desktop grid button
+        const xCoord = window.innerWidth / 2 + 340 - 45; // 340px is half of 680px, grid icon is around 45px from right
+        setOrigin({ x: `${xCoord}px`, y: `${20 + 26}px` });
+      }
+    };
+
+    updateOrigin();
+    window.addEventListener('resize', updateOrigin);
+    return () => window.removeEventListener('resize', updateOrigin);
+  }, []);
 
   const overlayVariants = {
-    hidden: { clipPath: 'circle(0px at 90% 40px)' },
+    hidden: { clipPath: 'circle(0px at var(--click-origin-x, 90%) var(--click-origin-y, 40px))' },
     visible: {
-      clipPath: 'circle(150vw at 90% 40px)',
+      clipPath: 'circle(250vmax at var(--click-origin-x, 90%) var(--click-origin-y, 40px))',
       transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] },
     },
     exit: {
-      clipPath: 'circle(0px at 90% 40px)',
+      clipPath: 'circle(0px at var(--click-origin-x, 90%) var(--click-origin-y, 40px))',
       transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] },
     },
   };
@@ -292,13 +314,17 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
       initial="hidden"
       animate="visible"
       exit="exit"
+      style={{
+        '--click-origin-x': origin.x,
+        '--click-origin-y': origin.y,
+      } as any}
       className="fixed inset-0 z-[200] bg-[#050d1a] flex flex-col pointer-events-auto overflow-hidden"
     >
       {/* ── SUBTLE ATMOSPHERE (No Images) ── */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(232,103,42,0.05)_0%,_transparent_60%)] pointer-events-none z-0" />
 
       {/* ── OVERLAY TOP BAR (Mirroring Navbar architecture but transparent) ── */}
-      <div className="absolute top-5 left-1/2 -translate-x-1/2 w-full max-w-[680px] flex md:hidden items-center justify-between px-5 h-[50px] z-20">
+      <div className="absolute top-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-[380px] flex md:hidden items-center justify-between px-5 h-[50px] z-20">
          <div className="relative w-[60px] h-[24px]">
             <Image src="/images/Screenshot_2026-05-19_115048-removebg-preview.png" alt="ARUBA COLL" fill sizes="60px" className="object-contain opacity-50" />
          </div>

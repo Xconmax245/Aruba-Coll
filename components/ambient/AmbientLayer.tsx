@@ -71,25 +71,29 @@ const ELEMENTS: AmbientElementConfig[] = [
 export default function AmbientLayer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
-
   useEffect(() => {
     if (!containerRef.current) return;
 
     const isMobile = window.innerWidth < 768;
-    const activeElements = isMobile 
-      ? ELEMENTS.filter(e => e.opacity > 0.10) 
-      : ELEMENTS;
 
     const ctx = gsap.context(() => {
-      activeElements.forEach((config, idx) => {
+      ELEMENTS.forEach((config, idx) => {
         const el = elementsRef.current[idx];
         if (!el) return;
+
+        // Hide low-opacity elements on mobile to prevent clutter
+        const isElementActive = !isMobile || config.opacity > 0.10;
+        if (!isElementActive) {
+          gsap.set(el, { display: 'none' });
+          return;
+        }
 
         const speed = isMobile ? config.scrollSpeed * 0.5 : config.scrollSpeed;
         const driftX = isMobile ? 0 : config.driftX;
 
         // 1. Initial State
         gsap.set(el, {
+          display: 'block',
           xPercent: -50,
           yPercent: -50,
           left: `${config.x}%`,
