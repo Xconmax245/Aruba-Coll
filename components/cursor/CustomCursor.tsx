@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useUIStore } from '@/lib/store/uiStore';
 import gsap from 'gsap';
 
@@ -9,6 +9,10 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export default function CustomCursor() {
   const [isTouch, setIsTouch] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const inactivityTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -45,13 +49,24 @@ export default function CustomCursor() {
     return () => document.documentElement.classList.remove('custom-cursor-active');
   }, [isTouch]);
 
-  // Initial styles are set as inline React styles directly on the elements to prevent hydration race conditions.
-
   // ── rAF tracking + event listeners ──────────────────────────────
   useEffect(() => {
     if (isTouch) return;
 
+    const resetInactivity = () => {
+      setIsVisible(true);
+      if (inactivityTimeout.current) {
+        clearTimeout(inactivityTimeout.current);
+      }
+      inactivityTimeout.current = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000); // 3 seconds of perfect stillness fades it out organically
+    };
+
     const onMove = (e: MouseEvent) => {
+      setHasMoved(true);
+      resetInactivity();
+
       // snap both positions on very first move (removes initial lag from (-300,-300))
       if (mouse.current.x === -300) {
         dotPos.current.x  = e.clientX;
@@ -64,15 +79,18 @@ export default function CustomCursor() {
     };
 
     const onDown = () => {
+      resetInactivity();
       gsap.to(dotRef.current,  { scale: 0.72, duration: 0.12, ease: 'power2.out' });
       gsap.to(auraRef.current, { scale: 0.78, duration: 0.14, ease: 'power2.out' });
     };
     const onUp = () => {
+      resetInactivity();
       gsap.to(dotRef.current,  { scale: 1, duration: 0.48, ease: 'back.out(2)' });
       gsap.to(auraRef.current, { scale: 1, duration: 0.48, ease: 'back.out(2)' });
     };
 
     const onOver = (e: MouseEvent) => {
+      resetInactivity();
       const t = e.target as HTMLElement;
       const el = t.closest<HTMLElement>('[data-cursor], a, button, img');
       if (!el) { setCursorVariant('default'); return; }
@@ -86,11 +104,25 @@ export default function CustomCursor() {
         setCursorVariant('button');
       }
     };
+    
     const onOut = (e: MouseEvent) => {
+      resetInactivity();
       const to = e.relatedTarget as HTMLElement | null;
       if (!to || !to.closest('[data-cursor], a, button, img')) {
         setCursorVariant('default');
       }
+    };
+
+    const onMouseLeave = () => {
+      setIsVisible(false);
+      if (inactivityTimeout.current) {
+        clearTimeout(inactivityTimeout.current);
+      }
+    };
+
+    const onMouseEnter = () => {
+      setIsVisible(true);
+      resetInactivity();
     };
 
     window.addEventListener('mousemove',  onMove, { passive: true });
@@ -98,6 +130,8 @@ export default function CustomCursor() {
     window.addEventListener('mouseup',    onUp);
     window.addEventListener('mouseover',  onOver, { passive: true });
     window.addEventListener('mouseout',   onOut,  { passive: true });
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseenter', onMouseEnter);
 
     let raf: number;
     const tick = () => {
@@ -123,6 +157,11 @@ export default function CustomCursor() {
       window.removeEventListener('mouseup',   onUp);
       window.removeEventListener('mouseover', onOver);
       window.removeEventListener('mouseout',  onOut);
+      document.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('mouseenter', onMouseEnter);
+      if (inactivityTimeout.current) {
+        clearTimeout(inactivityTimeout.current);
+      }
       cancelAnimationFrame(raf);
     };
   }, [isTouch, setCursorVariant]);
@@ -172,7 +211,6 @@ export default function CustomCursor() {
         break;
 
       case 'image':
-        // "heat over glass"
         dot.scale = 0; dot.opacity = 0;
         aura.width = 90; aura.height = 90;
         aura.backgroundColor = 'rgba(255,255,255,0.08)';
@@ -224,6 +262,8 @@ export default function CustomCursor() {
     pointerEvents: 'none',
     willChange: 'transform',
     mixBlendMode: (variant === 'button' || variant === 'shop-item') ? 'normal' : 'difference',
+    opacity: (hasMoved && isVisible) ? 1 : 0,
+    transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   return (
