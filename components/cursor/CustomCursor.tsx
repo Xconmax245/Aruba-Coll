@@ -12,8 +12,6 @@ export default function CustomCursor() {
   const [hasMoved, setHasMoved] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  const inactivityTimeout = useRef<NodeJS.Timeout | null>(null);
-
   useEffect(() => {
     setMounted(true);
 
@@ -53,19 +51,9 @@ export default function CustomCursor() {
   useEffect(() => {
     if (isTouch) return;
 
-    const resetInactivity = () => {
-      setIsVisible(true);
-      if (inactivityTimeout.current) {
-        clearTimeout(inactivityTimeout.current);
-      }
-      inactivityTimeout.current = setTimeout(() => {
-        setIsVisible(false);
-      }, 3000); // 3 seconds of perfect stillness fades it out organically
-    };
-
     const onMove = (e: MouseEvent) => {
       setHasMoved(true);
-      resetInactivity();
+      setIsVisible(true);
 
       // snap both positions on very first move (removes initial lag from (-300,-300))
       if (mouse.current.x === -300) {
@@ -79,18 +67,18 @@ export default function CustomCursor() {
     };
 
     const onDown = () => {
-      resetInactivity();
+      setIsVisible(true);
       gsap.to(dotRef.current,  { scale: 0.72, duration: 0.12, ease: 'power2.out' });
       gsap.to(auraRef.current, { scale: 0.78, duration: 0.14, ease: 'power2.out' });
     };
     const onUp = () => {
-      resetInactivity();
+      setIsVisible(true);
       gsap.to(dotRef.current,  { scale: 1, duration: 0.48, ease: 'back.out(2)' });
       gsap.to(auraRef.current, { scale: 1, duration: 0.48, ease: 'back.out(2)' });
     };
 
     const onOver = (e: MouseEvent) => {
-      resetInactivity();
+      setIsVisible(true);
       const t = e.target as HTMLElement;
       const el = t.closest<HTMLElement>('[data-cursor], a, button, img');
       if (!el) { setCursorVariant('default'); return; }
@@ -106,7 +94,7 @@ export default function CustomCursor() {
     };
     
     const onOut = (e: MouseEvent) => {
-      resetInactivity();
+      setIsVisible(true);
       const to = e.relatedTarget as HTMLElement | null;
       if (!to || !to.closest('[data-cursor], a, button, img')) {
         setCursorVariant('default');
@@ -115,14 +103,10 @@ export default function CustomCursor() {
 
     const onMouseLeave = () => {
       setIsVisible(false);
-      if (inactivityTimeout.current) {
-        clearTimeout(inactivityTimeout.current);
-      }
     };
 
     const onMouseEnter = () => {
       setIsVisible(true);
-      resetInactivity();
     };
 
     window.addEventListener('mousemove',  onMove, { passive: true });
@@ -135,17 +119,17 @@ export default function CustomCursor() {
 
     let raf: number;
     const tick = () => {
-      if (!dotWrapRef.current || !auraWrapRef.current) return;
-      
-      dotPos.current.x  = lerp(dotPos.current.x,  mouse.current.x, 0.22);
-      dotPos.current.y  = lerp(dotPos.current.y,  mouse.current.y, 0.22);
-      auraPos.current.x = lerp(auraPos.current.x, mouse.current.x, 0.08);
-      auraPos.current.y = lerp(auraPos.current.y, mouse.current.y, 0.08);
+      if (dotWrapRef.current && auraWrapRef.current) {
+        dotPos.current.x  = lerp(dotPos.current.x,  mouse.current.x, 0.22);
+        dotPos.current.y  = lerp(dotPos.current.y,  mouse.current.y, 0.22);
+        auraPos.current.x = lerp(auraPos.current.x, mouse.current.x, 0.08);
+        auraPos.current.y = lerp(auraPos.current.y, mouse.current.y, 0.08);
 
-      dotWrapRef.current.style.transform =
-        `translate3d(${dotPos.current.x}px,${dotPos.current.y}px,0)`;
-      auraWrapRef.current.style.transform =
-        `translate3d(${auraPos.current.x}px,${auraPos.current.y}px,0)`;
+        dotWrapRef.current.style.transform =
+          `translate3d(${dotPos.current.x}px,${dotPos.current.y}px,0)`;
+        auraWrapRef.current.style.transform =
+          `translate3d(${auraPos.current.x}px,${auraPos.current.y}px,0)`;
+      }
 
       raf = requestAnimationFrame(tick);
     };
@@ -159,9 +143,6 @@ export default function CustomCursor() {
       window.removeEventListener('mouseout',  onOut);
       document.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mouseenter', onMouseEnter);
-      if (inactivityTimeout.current) {
-        clearTimeout(inactivityTimeout.current);
-      }
       cancelAnimationFrame(raf);
     };
   }, [isTouch, setCursorVariant]);
@@ -281,6 +262,7 @@ export default function CustomCursor() {
             filter: 'blur(7px)',
             opacity: 1,
             border: 'none',
+            pointerEvents: 'none',
           }} 
         />
       </div>
@@ -298,6 +280,7 @@ export default function CustomCursor() {
             boxShadow: '0 0 10px 2px rgba(255,255,255,0.22)',
             opacity: 1,
             border: 'none',
+            pointerEvents: 'none',
           }} 
         />
       </div>
