@@ -13,24 +13,57 @@ const feelings = [
 ];
 
 export default function SectionFeeling() {
-  const bgRef = useRef(null);
-  const sectionRef = useRef(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     
-    if (bgRef.current && sectionRef.current) {
-      gsap.to(bgRef.current, {
-        yPercent: 20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true,
-        },
+    const ctx = gsap.context(() => {
+      // 1. Background parallax
+      if (bgRef.current) {
+        gsap.to(bgRef.current, {
+          yPercent: 15,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+      }
+
+      // 2. High-end editorial typewriter reveal
+      const lines = gsap.utils.toArray<HTMLElement>('.feeling-line');
+      lines.forEach((line) => {
+        const chars = line.querySelectorAll('.char');
+        if (chars.length === 0) return;
+
+        gsap.fromTo(chars,
+          {
+            opacity: 0,
+            y: 8,
+            filter: 'blur(3px)',
+          },
+          {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 0.38,
+            stagger: 0.03, // smooth progressive typing rate
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: line,
+              start: 'top 85%', // triggers when the top of the line reaches 85% of viewport height
+              toggleActions: 'play none none none',
+            },
+          }
+        );
       });
-    }
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -57,29 +90,33 @@ export default function SectionFeeling() {
 
       <div className="relative z-10 max-w-screen-xl mx-auto text-center">
         <p
-          data-aos="fade-up"
-          data-aos-duration="800"
           className="text-[10px] tracking-[0.4em] text-white/40 uppercase mb-16"
+          style={{ fontFamily: '"Work Sans", sans-serif' }}
         >
           What it feels like
         </p>
 
-        <div className="space-y-6 md:space-y-8">
+        <div className="space-y-8 md:space-y-12">
           {feelings.map((feeling, i) => (
             <p
               key={i}
-              data-aos="fade-up"
-              data-aos-delay={150 * i}
-              data-aos-duration="900"
-              className="oi-regular text-white/90 mx-auto"
+              className="feeling-line oi-regular text-white/90 mx-auto"
               style={{
-                fontSize: 'clamp(1.6rem, 4vw, 4rem)',
-                lineHeight: 1.1,
-                maxWidth: '18ch',
+                fontSize: 'clamp(1.4rem, 3.8vw, 3.6rem)',
+                lineHeight: 1.15,
+                maxWidth: '22ch',
                 opacity: 0.9 - 0.15 * i,
               }}
             >
-              {feeling}
+              {feeling.split('').map((char, charIdx) => (
+                <span
+                  key={charIdx}
+                  className="char inline-block will-change-[transform,opacity,filter]"
+                  style={{ opacity: 0, filter: 'blur(3px)', transform: 'translateY(8px)' }}
+                >
+                  {char === ' ' ? '\u00A0' : char}
+                </span>
+              ))}
             </p>
           ))}
         </div>
