@@ -8,6 +8,7 @@ import { useCart } from '@/lib/hooks/useCart';
 import { ShoppingBag, X } from 'lucide-react';
 
 const NAV_LINKS = [
+  { label: 'HOME', href: '/' },
   { label: 'SHOP', href: '/shop' },
   { label: 'COLLECTIONS', href: '/collections/summer-2026' },
   { label: 'LOOKBOOK', href: '/lookbook' },
@@ -77,7 +78,7 @@ export default function Navbar() {
           }}
         >
           {/* Left - Navigation */}
-          <div className="flex-1 flex items-center justify-start gap-8">
+          <div className="flex-1 flex items-center justify-start gap-5">
             {NAV_LINKS.map((link) => (
               <DesktopNavLink key={link.label} href={link.href} label={link.label} />
             ))}
@@ -373,7 +374,7 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
                   <span 
                     className="oi-regular block transition-all duration-500 ease-out"
                     style={{ 
-                      fontSize: 'clamp(3.5rem, 6vw, 5.5rem)', 
+                      fontSize: 'clamp(2rem, 5.5vw, 4.5rem)', 
                       lineHeight: 0.95, 
                       letterSpacing: '-0.02em',
                       color: isAnyHovered ? (isHovered ? '#fff' : 'transparent') : 'rgba(255,255,255,0.8)',
