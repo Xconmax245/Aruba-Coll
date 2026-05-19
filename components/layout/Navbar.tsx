@@ -86,13 +86,13 @@ export default function Navbar() {
 
           {/* Center Logo */}
           <Link href="/" className="block flex-shrink-0" aria-label="ARUBA COLL Home">
-            <div className="relative w-[50px] h-[28px] filter drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+            <div className="relative w-[75px] h-[38px] filter drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
               <Image
                 src="/images/Screenshot_2026-05-19_115048-removebg-preview.png"
                 alt="ARUBA COLL"
                 fill
                 priority
-                sizes="(max-width: 768px) 60px, 50px"
+                sizes="(max-width: 768px) 80px, 75px"
                 className="object-contain"
               />
             </div>
@@ -151,13 +151,13 @@ export default function Navbar() {
           }}
         >
           <Link href="/" className="block">
-            <div className="relative w-[60px] h-[24px] filter drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+            <div className="relative w-[80px] h-[32px] filter drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
               <Image
                 src="/images/Screenshot_2026-05-19_115048-removebg-preview.png"
                 alt="ARUBA COLL"
                 fill
                 priority
-                sizes="(max-width: 768px) 60px, 50px"
+                sizes="(max-width: 768px) 80px, 75px"
                 className="object-contain"
               />
             </div>
@@ -326,8 +326,8 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
 
       {/* ── OVERLAY TOP BAR (Mirroring Navbar architecture but transparent) ── */}
       <div className="absolute top-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-[380px] flex md:hidden items-center justify-between px-5 h-[50px] z-20">
-         <div className="relative w-[60px] h-[24px]">
-            <Image src="/images/Screenshot_2026-05-19_115048-removebg-preview.png" alt="ARUBA COLL" fill sizes="60px" className="object-contain opacity-50" />
+         <div className="relative w-[80px] h-[32px]">
+            <Image src="/images/Screenshot_2026-05-19_115048-removebg-preview.png" alt="ARUBA COLL" fill sizes="80px" className="object-contain opacity-90" />
          </div>
          <motion.button onClick={onClose} whileHover={{ rotate: 90 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="text-white/70 hover:text-white p-2">
            <X size={20} strokeWidth={1.5} />
@@ -340,8 +340,8 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
         
         {/* Center Logo */}
         <div className="w-[80px] h-[52px] flex items-center justify-center">
-          <div className="relative w-[50px] h-[28px] opacity-60">
-            <Image src="/images/Screenshot_2026-05-19_115048-removebg-preview.png" alt="ARUBA COLL" fill sizes="50px" className="object-contain" />
+          <div className="relative w-[75px] h-[38px] opacity-90">
+            <Image src="/images/Screenshot_2026-05-19_115048-removebg-preview.png" alt="ARUBA COLL" fill sizes="75px" className="object-contain" />
           </div>
         </div>
 
