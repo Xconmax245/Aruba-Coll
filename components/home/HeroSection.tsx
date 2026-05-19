@@ -23,7 +23,7 @@ export default function HeroSection() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-[0.85]"
         >
-          <source src="/images/ba_b_d_c_amp_.mp4" type="video/mp4" />
+          <source src="/images/b_d_b_c_a_mp_.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,_rgba(26,58,92,0.4)_0%,_rgba(10,22,40,0.7)_60%,_#050d1a_100%)]" />
       </div>
