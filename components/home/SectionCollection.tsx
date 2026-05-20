@@ -135,19 +135,22 @@ export default function SectionCollection() {
 
     const ctx = gsap.context(() => {
       // 0. Section-level transition: Rounded Floating Card expands to full-screen
-      gsap.fromTo(container,
-        { clipPath: 'inset(12% 8% 12% 8% round 30px)' },
-        {
-          clipPath: 'inset(0% 0% 0% 0% round 0px)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: container,
-            start: 'top bottom',
-            end: 'top 15%',
-            scrub: 0.5,
+      const wrap = container.querySelector('.collection-transition-wrap');
+      if (wrap) {
+        gsap.fromTo(wrap,
+          { clipPath: 'inset(10% 6% 10% 6% round 24px)' },
+          {
+            clipPath: 'inset(0% 0% 0% 0% round 0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: container,
+              start: 'top bottom',
+              end: 'top 12%',
+              scrub: 0.5,
+            }
           }
-        }
-      );
+        );
+      }
 
       // 1. Header scroll reveal
       const header = container.querySelector('.collection-header');
@@ -194,41 +197,43 @@ export default function SectionCollection() {
     <section
       ref={sectionRef}
       data-scroll-context="shop"
-      className="relative py-32 md:py-48 px-8 md:px-16 overflow-hidden bg-[#060f17]"
+      className="relative overflow-hidden bg-[#060f17]"
     >
-      {/* Subtle warm glow top center */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[30vh] bg-[radial-gradient(ellipse,_rgba(232,103,42,0.06)_0%,_transparent_70%)] pointer-events-none" />
+      <div className="collection-transition-wrap relative w-full py-32 md:py-48 px-8 md:px-16 bg-[#060f17] overflow-hidden">
+        {/* Subtle warm glow top center */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[30vh] bg-[radial-gradient(ellipse,_rgba(232,103,42,0.06)_0%,_transparent_70%)] pointer-events-none" />
 
-      <div className="max-w-screen-xl mx-auto relative z-10">
-        {/* Section header */}
-        <div className="collection-header flex items-end justify-between mb-20 md:mb-28 opacity-0">
-          <div>
-            <p className="text-[10px] tracking-[0.4em] text-white/40 uppercase mb-4" style={{ fontFamily: '"Work Sans", sans-serif' }}>
-              02 — Collections
-            </p>
-            <h2
-              className="oi-regular text-white leading-none"
-              style={{ fontSize: 'clamp(2.5rem, 6.5vw, 6rem)' }}
+        <div className="max-w-screen-xl mx-auto relative z-10">
+          {/* Section header */}
+          <div className="collection-header flex items-end justify-between mb-20 md:mb-28 opacity-0">
+            <div>
+              <p className="text-[10px] tracking-[0.4em] text-white/40 uppercase mb-4" style={{ fontFamily: '"Work Sans", sans-serif' }}>
+                02 — Collections
+              </p>
+              <h2
+                className="oi-regular text-white leading-none"
+                style={{ fontSize: 'clamp(2.5rem, 6.5vw, 6rem)' }}
+              >
+                The Season
+              </h2>
+            </div>
+            <Link
+              href="/collections"
+              className="hidden md:inline-flex items-center gap-3 text-white/50 hover:text-white text-xs tracking-[0.25em] uppercase transition-colors duration-300"
+              data-cursor="button"
+              style={{ fontFamily: '"Work Sans", sans-serif' }}
             >
-              The Season
-            </h2>
+              All Collections
+              <span className="group-hover:translate-x-2 transition-transform">→</span>
+            </Link>
           </div>
-          <Link
-            href="/collections"
-            className="hidden md:inline-flex items-center gap-3 text-white/50 hover:text-white text-xs tracking-[0.25em] uppercase transition-colors duration-300"
-            data-cursor="button"
-            style={{ fontFamily: '"Work Sans", sans-serif' }}
-          >
-            All Collections
-            <span className="group-hover:translate-x-2 transition-transform">→</span>
-          </Link>
-        </div>
 
-        {/* Collections grid */}
-        <div className="collection-grid grid md:grid-cols-3 gap-4 md:gap-6">
-          {collections.map((col, i) => (
-            <CollectionCard key={col.id} col={col} i={i} />
-          ))}
+          {/* Collections grid */}
+          <div className="collection-grid grid md:grid-cols-3 gap-4 md:gap-6">
+            {collections.map((col, i) => (
+              <CollectionCard key={col.id} col={col} i={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

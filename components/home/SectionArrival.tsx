@@ -117,21 +117,24 @@ export default function SectionArrival() {
 
     const ctx = gsap.context(() => {
       // 0. Section-level transition: Card Stack Slide-up Zoom
-      gsap.fromTo(container,
-        { y: '15vh', scale: 0.96, opacity: 0.9 },
-        {
-          y: '0vh',
-          scale: 1,
-          opacity: 1,
-          ease: 'power1.out',
-          scrollTrigger: {
-            trigger: container,
-            start: 'top bottom',
-            end: 'top 10%',
-            scrub: 0.5,
+      const wrap = container.querySelector('.arrival-transition-wrap');
+      if (wrap) {
+        gsap.fromTo(wrap,
+          { y: '12vh', scale: 0.96, opacity: 0.95 },
+          {
+            y: '0vh',
+            scale: 1,
+            opacity: 1,
+            ease: 'power1.out',
+            scrollTrigger: {
+              trigger: container,
+              start: 'top bottom',
+              end: 'top 10%',
+              scrub: 0.5,
+            }
           }
-        }
-      );
+        );
+      }
 
       // 1. Heading Scroll-reveal
       const header = container.querySelector('.arrival-header');
@@ -181,41 +184,43 @@ export default function SectionArrival() {
     <section
       ref={sectionRef}
       data-scroll-context="shop"
-      className="relative py-32 md:py-48 px-8 md:px-16 overflow-hidden bg-[#060f17]"
+      className="relative overflow-hidden bg-[#060f17]"
       style={{ background: 'linear-gradient(180deg, #0c1a12 0%, #060f17 100%)' }}
     >
-      {/* Coral glow top right */}
-      <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-[radial-gradient(ellipse_at_top_right,_rgba(232,93,74,0.08)_0%,_transparent_60%)] pointer-events-none" />
+      <div className="arrival-transition-wrap relative w-full py-32 md:py-48 px-8 md:px-16 overflow-hidden">
+        {/* Coral glow top right */}
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-[radial-gradient(ellipse_at_top_right,_rgba(232,93,74,0.08)_0%,_transparent_60%)] pointer-events-none" />
 
-      <div className="max-w-screen-xl mx-auto">
-        {/* Header */}
-        <div className="arrival-header flex items-end justify-between mb-20 opacity-0">
-          <div>
-            <p className="text-[10px] tracking-[0.4em] text-white/40 uppercase mb-4" style={{ fontFamily: '"Work Sans", sans-serif' }}>
-              05 — New Arrivals
-            </p>
-            <h2
-              className="oi-regular text-white leading-none"
-              style={{ fontSize: 'clamp(2.5rem, 6.5vw, 6rem)' }}
+        <div className="max-w-screen-xl mx-auto">
+          {/* Header */}
+          <div className="arrival-header flex items-end justify-between mb-20 opacity-0">
+            <div>
+              <p className="text-[10px] tracking-[0.4em] text-white/40 uppercase mb-4" style={{ fontFamily: '"Work Sans", sans-serif' }}>
+                05 — New Arrivals
+              </p>
+              <h2
+                className="oi-regular text-white leading-none"
+                style={{ fontSize: 'clamp(2.5rem, 6.5vw, 6rem)' }}
+              >
+                Just In
+              </h2>
+            </div>
+            <Link
+              href="/shop"
+              className="hidden md:inline-flex items-center gap-3 text-white/50 hover:text-white text-xs tracking-[0.25em] uppercase transition-colors duration-300"
+              data-cursor="button"
+              style={{ fontFamily: '"Work Sans", sans-serif' }}
             >
-              Just In
-            </h2>
+              Shop All →
+            </Link>
           </div>
-          <Link
-            href="/shop"
-            className="hidden md:inline-flex items-center gap-3 text-white/50 hover:text-white text-xs tracking-[0.25em] uppercase transition-colors duration-300"
-            data-cursor="button"
-            style={{ fontFamily: '"Work Sans", sans-serif' }}
-          >
-            Shop All →
-          </Link>
-        </div>
 
-        {/* Product grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {arrivals.map((item, i) => (
-            <ArrivalCard key={item.id} item={item} i={i} />
-          ))}
+          {/* Product grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {arrivals.map((item, i) => (
+              <ArrivalCard key={item.id} item={item} i={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
