@@ -99,7 +99,6 @@ export default function SectionFeeling() {
               trigger: line,
               start: 'top 88%',   // triggers when line top is at 88% of viewport
               end: 'bottom 48%',  // fully completed when line bottom reaches 48%
-              scrollTrigger: null, // override if needed
               scrub: 0.6,         // premium delay scrub inertia
             },
           }
