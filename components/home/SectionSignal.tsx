@@ -20,6 +20,21 @@ export default function SectionSignal() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
+      // 0. Section-level transition: Circular Iris Reveal
+      gsap.fromTo(container,
+        { clipPath: 'circle(15% at 50% 50%)' },
+        {
+          clipPath: 'circle(100% at 50% 50%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top bottom',
+            end: 'top 12%',
+            scrub: 0.5,
+          }
+        }
+      );
+
       // 1. Ambient Background Radar Pulse scale
       const radarGlow = container.querySelector('.signal-radar-glow');
       if (radarGlow) {

@@ -116,6 +116,23 @@ export default function SectionArrival() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
+      // 0. Section-level transition: Card Stack Slide-up Zoom
+      gsap.fromTo(container,
+        { y: '15vh', scale: 0.96, opacity: 0.9 },
+        {
+          y: '0vh',
+          scale: 1,
+          opacity: 1,
+          ease: 'power1.out',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top bottom',
+            end: 'top 10%',
+            scrub: 0.5,
+          }
+        }
+      );
+
       // 1. Heading Scroll-reveal
       const header = container.querySelector('.arrival-header');
       if (header) {

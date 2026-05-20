@@ -23,6 +23,23 @@ export default function SectionFeeling() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
+      // 0. Section-level transition: Overlapping Card Stack Scale Zoom
+      gsap.fromTo(container,
+        { scale: 0.95, y: '8vh', opacity: 0.9 },
+        {
+          scale: 1,
+          y: '0vh',
+          opacity: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top bottom',
+            end: 'top 15%',
+            scrub: 0.5,
+          }
+        }
+      );
+
       // 1. Background parallax
       if (bgRef.current) {
         gsap.to(bgRef.current, {
@@ -82,6 +99,7 @@ export default function SectionFeeling() {
               trigger: line,
               start: 'top 88%',   // triggers when line top is at 88% of viewport
               end: 'bottom 48%',  // fully completed when line bottom reaches 48%
+              scrollTrigger: null, // override if needed
               scrub: 0.6,         // premium delay scrub inertia
             },
           }

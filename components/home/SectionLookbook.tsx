@@ -123,6 +123,21 @@ export default function SectionLookbook() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
+      // 0. Section-level transition: Horizontal Curtain-Draw Wipe
+      gsap.fromTo(container,
+        { clipPath: 'inset(0% 50% 0% 50%)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top bottom',
+            end: 'top 15%',
+            scrub: 0.5,
+          }
+        }
+      );
+
       // 1. Header scroll animation
       const header = container.querySelector('.lookbook-header');
       if (header) {

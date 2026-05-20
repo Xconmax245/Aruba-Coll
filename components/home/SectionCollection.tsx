@@ -134,6 +134,21 @@ export default function SectionCollection() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
+      // 0. Section-level transition: Rounded Floating Card expands to full-screen
+      gsap.fromTo(container,
+        { clipPath: 'inset(12% 8% 12% 8% round 30px)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0% round 0px)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top bottom',
+            end: 'top 15%',
+            scrub: 0.5,
+          }
+        }
+      );
+
       // 1. Header scroll reveal
       const header = container.querySelector('.collection-header');
       if (header) {

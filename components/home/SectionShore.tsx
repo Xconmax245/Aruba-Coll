@@ -91,6 +91,21 @@ export default function SectionShore() {
     const ctx = gsap.context(() => {
       const isMobile = window.innerWidth < 768;
 
+      // 0. Section-level transition: Angled geometric perspective polygon reveal
+      gsap.fromTo(container,
+        { clipPath: 'polygon(0% 15%, 100% 0%, 100% 100%, 0% 100%)' },
+        {
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top bottom',
+            end: 'top 10%',
+            scrub: 0.5,
+          }
+        }
+      );
+
       // 1. Backdrop Splitting Word Parallax
       const driftWord = container.querySelector('.shore-drift');
       const philosophyWord = container.querySelector('.shore-philosophy');
